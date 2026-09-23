@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+// Delete from beginning
+struct Node* deleteBeginning(struct Node *last) {
+    if (last == NULL) {
+        printf("List is empty\n");
+        return NULL;
+    }
+
+    struct Node *temp = last->next;
+
+    // Only one node
+    if (temp == last) {
+        free(temp);
+        return NULL;
+    }
+
+    last->next = temp->next;
+    free(temp);
+
+    return last;
+}
+
+// Delete from end
+struct Node* deleteEnd(struct Node *last) {
+    if (last == NULL) {
+        printf("List is empty\n");
+        return NULL;
+    }
+
+    struct Node *temp = last->next;
+
+    // Only one node
+    if (temp == last) {
+        free(last);
+        return NULL;
+    }
+
+    // Find the node before last
+    while (temp->next != last) {
+        temp = temp->next;
+    }
+
+    temp->next = last->next;
+    free(last);
+
+    return temp;
+}
+
+// Display the circular linked list
+void display(struct Node *last) {
+    if (last == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    struct Node *temp = last->next;
+
+    do {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    } while (temp != last->next);
+
+    printf("(back to first)\n");
+}
+
+int main() {
+    struct Node *last = NULL;
+
+    // Creating nodes manually
+    struct Node *n1 = malloc(sizeof(struct Node));
+    struct Node *n2 = malloc(sizeof(struct Node));
+    struct Node *n3 = malloc(sizeof(struct Node));
+
+    n1->data = 10;
+    n2->data = 20;
+    n3->data = 30;
+
+    n1->next = n2;
+    n2->next = n3;
+    n3->next = n1;
+
+    last = n3;
+
+    printf("Original List:\n");
+    display(last);
+
+    last = deleteBeginning(last);
+    printf("After deleting beginning:\n");
+    display(last);
+
+    last = deleteEnd(last);
+    printf("After deleting end:\n");
+    display(last);
+
+    return 0;
+}
