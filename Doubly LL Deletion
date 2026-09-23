@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *prev;
+    struct Node *next;
+};
+
+// Delete from beginning
+struct Node* deleteBeginning(struct Node *head) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return NULL;
+    }
+
+    struct Node *temp = head;
+    head = head->next;
+
+    if (head != NULL) {
+        head->prev = NULL;
+    }
+
+    free(temp);
+    return head;
+}
+
+// Delete from end
+struct Node* deleteEnd(struct Node *head) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return NULL;
+    }
+
+    struct Node *temp = head;
+
+    // Move to last node
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+
+    if (temp->prev != NULL) {
+        temp->prev->next = NULL;
+    } else {
+        // Only one node
+        head = NULL;
+    }
+
+    free(temp);
+    return head;
+}
+
+// Delete from a specific position
+struct Node* deletePosition(struct Node *head, int position) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return NULL;
+    }
+
+    struct Node *temp = head;
+    int i;
+
+    // Move to required position
+    for (i = 1; i < position && temp != NULL; i++) {
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        printf("Invalid position\n");
+        return head;
+    }
+
+    if (temp->prev != NULL) {
+        temp->prev->next = temp->next;
+    } else {
+        head = temp->next;
+    }
+
+    if (temp->next != NULL) {
+        temp->next->prev = temp->prev;
+    }
+
+    free(temp);
+    return head;
+}
+
+// Display list
+void display(struct Node *head) {
+    struct Node *temp = head;
+
+    while (temp != NULL) {
+        printf("%d <-> ", temp->data);
+        temp = temp->next;
+    }
+
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node *head = NULL;
+
+    // Creating a list: 10 <-> 20 <-> 30 <-> 40
+    struct Node *n1 = malloc(sizeof(struct Node));
+    struct Node *n2 = malloc(sizeof(struct Node));
+    struct Node *n3 = malloc(sizeof(struct Node));
+    struct Node *n4 = malloc(sizeof(struct Node));
+
+    n1->data = 10;
+    n2->data = 20;
+    n3->data = 30;
+    n4->data = 40;
+
+    n1->prev = NULL;
+    n1->next = n2;
+
+    n2->prev = n1;
+    n2->next = n3;
+
+    n3->prev = n2;
+    n3->next = n4;
+
+    n4->prev = n3;
+    n4->next = NULL;
+
+    head = n1;
+
+    printf("Original List:\n");
+    display(head);
+
+    head = deleteBeginning(head);
+    printf("After deleting beginning:\n");
+    display(head);
+
+    head = deleteEnd(head);
+    printf("After deleting end:\n");
+    display(head);
+
+    head = deletePosition(head, 2);
+    printf("After deleting position 2:\n");
+    display(head);
+
+    return 0;
+}
